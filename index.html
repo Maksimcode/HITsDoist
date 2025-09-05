@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HITsDoist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="container">
+    <div class="todo-header">
+            <h1>HITsDoist</h1>
+            <p>Ваш помощник на хитсе.</p>
+    </div>
+
+        <div>
+            <input 
+            type="text" 
+            id="input" 
+            placeholder="Введите задачу"/>
+            <button type="button" id="addBtn">Добавить</button>
+        </div>
+        
+        
+        <p>Не выполненные</p>
+        <ul id="incompleteTasks">
+        </ul>
+
+        <p>Завершенные</p>
+        <ul id = "completedTasks">
+        </ul>
+    </div>
+        
+
+    <script src="app.js"></script>
+</body>
+</html>
