@@ -1,6 +1,53 @@
 const addBtn = document.getElementById("addBtn");
 addBtn.addEventListener("click", createTask);
 
+let tasks = []
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadTasks();
+  renderTasks();
+});
+
+function loadTasks() {
+    const saved = localStorage.getItem('tasks');
+    tasks = saved ? JSON.parse(saved) : [];
+}
+function saveTasks(){
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function renderTasks() {
+    const incompleteTasks = document.getElementById('incompleteTasks');
+    const completedTasks = document.getElementById('completedTasks');
+
+    incompleteTasks.innerHTML = '';
+    completedTasks.innerHTML = '';
+
+    tasks.forEach(({ taskText, done }, i) => {
+        const li = document.createElement('li');
+        const textSpan = document.createElement('span');
+        const completeBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
+
+        textSpan.textContent = taskText;
+        completeBtn.textContent = done ? '↩️' : '✅';
+        delBtn.textContent = '🗑️'
+
+        textSpan.addEventListener('click',() => editTask(i));
+        completeBtn.addEventListener('click', () => completeTask(i));
+        delBtn.addEventListener('click', () => deleteTask(i));
+
+        li.append(textSpan, completeBtn, delBtn);
+
+        if (done) {
+            completedTasks.appendChild(li);
+        } else {
+            incompleteTasks.appendChild(li);
+        }
+    });
+}
+        
+
 function createTask() {
     const taskText = document
     .getElementById("input")
@@ -11,52 +58,31 @@ function createTask() {
         alert("Пожалуйста, введите задачу.");
         return;
     }
-
-    const li = document.createElement('li');
-    const textSpan = document.createElement('span');
-    const completeBtn = document.createElement('button');
-    const delBtn = document.createElement('button');
-
-    textSpan.textContent   = taskText;
-    completeBtn.textContent = '✅';
-    delBtn.textContent = '🗑️';
-    
-    textSpan.addEventListener('click', editTask);
-    completeBtn.addEventListener('click', completeTask);
-    delBtn.addEventListener('click', deleteTask);
-    
-    li.append(textSpan, completeBtn, delBtn);
-    document.getElementById('incompleteTasks').appendChild(li);
-
+    tasks.push({ taskText: taskText, done: false });
+    saveTasks();
+    renderTasks();
 }
 
-function deleteTask(e) {
-    const li = e.target.parentElement;
-    li.parentNode.removeChild(li)
+function deleteTask(i) {
+    tasks.splice(i, 1);
+    saveTasks();
+    renderTasks();
 }
 
-function completeTask(e) { 
-    const li = e.target.parentNode; 
-    const inIncomplete = li.parentNode.id === 'incompleteTasks';
+function completeTask(i) { 
+    tasks[i].done = !tasks[i].done;
+    saveTasks();
+    renderTasks();
+}
 
-    const targetList = inIncomplete 
-        ? document.getElementById('completedTasks') 
-        : document.getElementById('incompleteTasks'); 
-
-    e.target.textContent = inIncomplete ? '↩️' : '✅'; 
-
-    targetList.appendChild(li); }
-
-function editTask(e) {
-    const taskText = e.target.textContent;
+function editTask(i) {
+    const taskText = tasks[i].taskText;
     const newTaskText = prompt("Отредактируйте задачу", taskText);
-    if (newTaskText !== null) {
-        e.target.textContent = newTaskText;
+    if (newTaskText !== null && newTaskText.trim()) {
+        tasks[i].taskText = newTaskText.trim();
+        saveTasks();
+        renderTasks();
     }
 }
 
 
-// let todo = JSON.parse(localStorage.getItem("incompleteTasks"));
-// if (!todo) {
-//   todo = [];
-// }
